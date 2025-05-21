@@ -4,6 +4,9 @@ const path = require('path');
 const fetch = require('node-fetch'); // ใช้ส่งข้อความ Discord webhook
 const admin = require('firebase-admin');
 
+const app = express();  // ประกาศ app ก่อนใช้งาน
+const port = 3000;
+
 const privateKey = process.env.private_key.replace(/\\n/g, '\n');
 
 const serviceAccount = {
@@ -24,11 +27,17 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
 
-
+// ตั้ง route /test
+app.get('/test', (req, res) => {
+  res.send('API is working!');
+});
 
 const db = admin.firestore();
-const app = express();
-const port = 3000;
+
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+});
+
 
 app.use(cors());
 // ใช้ express built-in json parser แทน body-parser
