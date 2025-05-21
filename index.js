@@ -7,6 +7,11 @@ const admin = require('firebase-admin');
 const app = express();  // ประกาศ app ก่อนใช้งาน
 const port = process.env.PORT || 3000;
 
+// ตรวจสอบ private_key ก่อนใช้งาน (กัน error กรณี env ไม่ครบ)
+if (!process.env.private_key) {
+  console.error("Missing environment variable: private_key");
+  process.exit(1);
+}
 
 const privateKey = process.env.private_key.replace(/\\n/g, '\n');
 
@@ -28,16 +33,17 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
 
+const db = admin.firestore();
+
 // ตั้ง route /test
 app.get('/test', (req, res) => {
   res.send('API is working!');
 });
 
-const db = admin.firestore();
-
 app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
+  console.log(`Server started on port ${port}`);
 });
+
 
 
 app.use(cors());
