@@ -5,7 +5,8 @@ const fetch = require('node-fetch'); // ใช้ส่งข้อความ 
 const admin = require('firebase-admin');
 
 const app = express();  // ประกาศ app ก่อนใช้งาน
-const port = 3000;
+const port = process.env.PORT || 3000;
+
 
 const privateKey = process.env.private_key.replace(/\\n/g, '\n');
 
