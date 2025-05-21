@@ -334,5 +334,6 @@ app.get('/getLogs', adminAuth, async (req, res) => {
 
 // Start server
 app.listen(port, () => {
-  console.log(`🔥 Server is running at http://localhost:${port}`);
+  console.log(`Server running on port ${port}`);
 });
+
