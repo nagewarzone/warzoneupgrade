@@ -7,34 +7,13 @@ const admin = require('firebase-admin');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// ตรวจสอบ private_key ก่อนใช้งาน (กัน error กรณี env ไม่ครบ)
-if (!process.env.private_key) {
-  console.error("Missing environment variable: private_key");
-  process.exit(1);
-}
+const serviceAccount = require('./serviceAccountKey.json');
 
-// กำหนด serviceAccount จาก environment variables
-const privateKey = process.env.private_key.replace(/\\n/g, '\n');
-
-const serviceAccount = {
-  type: process.env.type,
-  project_id: process.env.project_id,
-  private_key_id: process.env.private_key_id,
-  private_key: privateKey,
-  client_email: process.env.client_email,
-  client_id: process.env.client_id,
-  auth_uri: process.env.auth_uri,
-  token_uri: process.env.token_uri,
-  auth_provider_x509_cert_url: process.env.auth_provider_x509_cert_url,
-  client_x509_cert_url: process.env.client_x509_cert_url,
-  universe_domain: process.env.universe_domain
-};
-
-// Initialize Firebase Admin SDK
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
+  credential: admin.credential.cert(serviceAccount),
 });
 
+// ตัวอย่างเรียก Firestore
 const db = admin.firestore();
 
 // Middleware
@@ -45,6 +24,26 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ฟังก์ชันส่งข้อความแจ้งเตือนไป Discord webhook
+async function sendDiscordNotification(webhookUrl, message) {
+  try {
+    const response = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: message }),
+    });
+
+    if (!response.ok) {
+      console.error('Failed to send Discord notification:', response.statusText);
+    }
+  } catch (error) {
+    console.error('Error sending Discord notification:', error);
+  }
+}
+
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+});
+
 async function sendDiscord(message, embed = null) {
   const webhookURL = 'https://discord.com/api/webhooks/1374624597881786439/1SmgQBuaM582kC3E6f0_dDmLKUu-nFxg0XLq2pjC4F7Dd6P3Q6Mj1qATz7jMhYWi-Drt';
   try {
