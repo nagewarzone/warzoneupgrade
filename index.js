@@ -5,7 +5,7 @@ const fetch = require('node-fetch'); // ใช้ส่งข้อความ 
 const admin = require('firebase-admin');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4000;
 
 const serviceAccount = require('./serviceAccountKey.json');
 
